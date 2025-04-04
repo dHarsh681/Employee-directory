@@ -7,6 +7,8 @@ import DepartmentFilter from '@/components/DepartmentFilter';
 import SortDropdown, { SortField, SortOrder } from '@/components/SortDropdown';
 import DepartmentStats from '@/components/DepartmentStats';
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { LogOut } from 'lucide-react';
 
 export default function Home() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -19,6 +21,7 @@ export default function Home() {
   const [sortField, setSortField] = useState<SortField>('Employee Name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [showStats, setShowStats] = useState(true);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -106,6 +109,12 @@ export default function Home() {
     setSortOrder(order);
   };
 
+  const handleLogout = () => {
+    // Remove cookie for middleware
+    document.cookie = 'isAuthenticated=false; path=/';
+    logout();
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 flex items-center justify-center">
@@ -141,12 +150,26 @@ export default function Home() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-4 md:mb-0">Employee Directory</h1>
-          <button
-            onClick={() => setShowStats(!showStats)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
-          >
-            {showStats ? 'Hide Statistics' : 'Show Statistics'}
-          </button>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setShowStats(!showStats)}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
+              {showStats ? 'Hide Statistics' : 'Show Statistics'}
+            </button>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                {user?.username}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300"
+                title="Logout"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
+          </div>
         </div>
         
         {showStats && <DepartmentStats employees={employees} />}

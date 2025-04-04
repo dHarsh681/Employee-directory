@@ -10,11 +10,11 @@ export default function EmployeeCard({ employee }: EmployeeCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleCall = () => {
-    window.location.href = `tel:${employee["Contact Number"]}`;
+    window.location.href = `tel:${employee["Phone"]}`;
   };
 
   const handleEmail = () => {
-    window.location.href = `mailto:${employee["Mail ID"]}`;
+    window.location.href = `mailto:${employee["Email"]}`;
   };
 
   return (
@@ -62,12 +62,12 @@ export default function EmployeeCard({ employee }: EmployeeCardProps) {
         <div className="flex items-center text-gray-600 dark:text-gray-300">
           <Phone className="h-5 w-5 text-gray-400 dark:text-gray-500 mr-2" />
           <span className="font-medium">Contact:</span>
-          <span className="ml-2">{employee["Contact Number"]}</span>
+          <span className="ml-2">{employee["Phone"]}</span>
         </div>
         <div className="flex items-center text-gray-600 dark:text-gray-300">
           <Mail className="h-5 w-5 text-gray-400 dark:text-gray-500 mr-2" />
           <span className="font-medium">Email:</span>
-          <span className="ml-2">{employee["Mail ID"]}</span>
+          <span className="ml-2">{employee["Email"]}</span>
         </div>
       </div>
     </div>

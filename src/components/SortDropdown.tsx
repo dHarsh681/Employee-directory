@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowUpDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 export type SortField = 'Employee Name' | 'Department' | 'Designation';
 export type SortOrder = 'asc' | 'desc';
@@ -11,48 +11,60 @@ interface SortDropdownProps {
 }
 
 export default function SortDropdown({ onSortChange }: SortDropdownProps) {
-  const [sortField, setSortField] = useState<SortField>('Employee Name');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedField, setSelectedField] = useState<SortField>('Employee Name');
+  const [selectedOrder, setSelectedOrder] = useState<SortOrder>('asc');
 
-  const handleFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const field = e.target.value as SortField;
-    setSortField(field);
-    onSortChange(field, sortOrder);
-  };
-
-  const handleOrderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const order = e.target.value as SortOrder;
-    setSortOrder(order);
-    onSortChange(sortField, order);
+  const handleSort = (field: SortField, order: SortOrder) => {
+    setSelectedField(field);
+    setSelectedOrder(order);
+    onSortChange(field, order);
+    setIsOpen(false);
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <div className="flex items-center">
-        <ArrowUpDown className="h-4 w-4 text-gray-500 mr-2" />
-        <label htmlFor="sort-field" className="text-sm font-medium text-gray-700 mr-2">
-          Sort by:
-        </label>
-        <select
-          id="sort-field"
-          className="block pl-3 pr-10 py-1 text-sm border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md"
-          value={sortField}
-          onChange={handleFieldChange}
-        >
-          <option value="Employee Name">Name</option>
-          <option value="Department">Department</option>
-          <option value="Designation">Designation</option>
-        </select>
-      </div>
-      <select
-        id="sort-order"
-        className="block pl-3 pr-10 py-1 text-sm border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md"
-        value={sortOrder}
-        onChange={handleOrderChange}
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors duration-200"
       >
-        <option value="asc">Ascending</option>
-        <option value="desc">Descending</option>
-      </select>
+        Sort by: {selectedField}
+        <ChevronDown className="ml-2 h-4 w-4" />
+      </button>
+
+      {isOpen && (
+        <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 z-10">
+          <div className="py-1" role="menu" aria-orientation="vertical">
+            {(['Employee Name', 'Department', 'Designation'] as SortField[]).map((field) => (
+              <div key={field} className="px-4 py-2">
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{field}</div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleSort(field, 'asc')}
+                    className={`px-3 py-1 text-sm rounded-md ${
+                      selectedField === field && selectedOrder === 'asc'
+                        ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    Ascending
+                  </button>
+                  <button
+                    onClick={() => handleSort(field, 'desc')}
+                    className={`px-3 py-1 text-sm rounded-md ${
+                      selectedField === field && selectedOrder === 'desc'
+                        ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200'
+                        : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    Descending
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
